@@ -4,6 +4,11 @@ const morgan = require('morgan')
 const cors = require('cors')
 const helmet = require('helmet')
 const { NODE_ENV } = require('./config')
+const listsRouter = require('./lists/lists-router')
+const listsItemsRouter = require('./listsItems/listsItems-router')
+const eventsRouter = require('./events/events-router')
+const financesRouter = require('./finances/finances-router')
+const balancesRouter = require('./balances/balances-router')
 
 const app = express()
 
@@ -12,6 +17,12 @@ const morganOption = (NODE_ENV === 'production') ? 'tiny' : 'common';
 app.use(morgan(morganOption))
 app.use(helmet())
 app.use(cors())
+
+app.use('/api/lists', listsRouter)
+app.use('/api/lists_items', listsItemsRouter)
+app.use('/api/events', eventsRouter)
+app.use('/api/finances', financesRouter)
+app.use('/api/balances', balancesRouter)
 
 app.get('/', (req, res) => {
    res.send('Hello, World!')
