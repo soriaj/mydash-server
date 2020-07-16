@@ -1,10 +1,10 @@
-require('dontenv').config()
+require('dotenv').config()
 
-const knew = require('knew')
+const knex = require('knex')
 const app = require('./app')
-const { PORT, DATABASE_URL } = require('./config')
+const { PORT, TEST_DATABASE_URL } = require('./config')
 
-const db = knew({
+const db = knex({
    client: 'pg',
    connection: TEST_DATABASE_URL,
 })
