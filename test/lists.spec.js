@@ -3,6 +3,7 @@ const knex = require('knex')
 const app = require('../src/app')
 const helpers = require('./test-helpers')
 const supertest = require('supertest')
+const { expect } = require('chai')
 
 
 describe('Lists service object', () => {
@@ -27,6 +28,7 @@ describe('Lists service object', () => {
 
    afterEach('cleanup tables', () => helpers.cleanTables(db))
    
+   // GET Lists tests
    describe('GET /api/lists', () => {
       context(`Given no lists`, () => {
          beforeEach(`insert users`, () => {
@@ -55,6 +57,43 @@ describe('Lists service object', () => {
                .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
                .expect(200, expectedLists)
          })
+      })
+   })
+
+   // POST Lists tests
+   describe('POST /api/lists', () => {
+      beforeEach(`insert lists into db`, () => {
+         helpers.seedListsTable(
+            db,
+            testUsers,
+            testLists
+         )
+      })
+
+      it(`Create a new list and respond with 201 and the new lsit`, function() {
+         this.retries(3)
+
+         const newList = {
+            name: 'New List Title',
+            content: 'New List Content',
+            user_id: testUsers[0].id
+         }
+         return supertest(app)
+            .post('/api/lists')
+            .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+            .send(newList)
+            .expect(201)
+            .expect(res => {
+               expect(res.body).to.have.property('id')
+               expect(res.body.name).to.eql(newList.name)
+               expect(res.body.content).to.eql(newList.content)
+               expect(res.headers.location).to.eql(`/api/lists/${res.body.id}`)
+            })
+            .then(postRes => {
+               supertest(app)
+                  .get(`/api/lists/${postRes.body.id}`)
+                  .expect(postRes.body)
+            })
       })
    })
    
