@@ -43,7 +43,26 @@ listsItemsRouter
    // })
 
 listsItemsRouter
-   .route('/:list_id')
+   .route('/:list_itemId')
+   .all(requireAuth)
+   .all((req, res, next) => {
+      const { list_itemId } = req.params
+      const user_id = req.user.id
+      const knexInstance = req.app.get('db')
+
+      ListsItemsService.getListsItemById(knexInstance, list_itemId)
+         .then(list_item => {
+            if(!list_item || list_item.user_id !== user_id ) {
+               return res.status(404).json({ error: { message: `List Item doesn't exist` }})
+            }
+            res.list_item = list_item
+            next()
+         })
+         .catch(next)
+   })
+   .get((req, res) => {
+      res.json(ListsItemsService.serializeListsItems(res.list_item))
+   })
    // .post(requireAuth, bodyParser, (req, res, next) => {
    //    const { name } = req.body
    //    const newListItem = { name }
@@ -68,9 +87,9 @@ listsItemsRouter
    //          .catch(next)
    // })
    .delete(requireAuth, (req, res, next) => {
-      const { list_id } = req.params
+      const { list_itemId } = req.params
       const knexInstance = req.app.get('db')
-      ListsItemsService.deleteItem(knexInstance, list_id)
+      ListsItemsService.deleteItem(knexInstance, list_itemId)
          .then(() => {
             res.status(204).end()
          })

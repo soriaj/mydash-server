@@ -57,18 +57,42 @@ describe.only('Lists Items service object', () => {
       })
    })
 
-   //GET lists items test
-   describe(`GET /api/lists`, () => {
+   //DELETE lists items test
+   describe(`DELETE /api/lists_items/:lists_itemId`, () => {
       context(`Given no lists items`, () => {
          beforeEach(`insert users`, () => {
             helpers.seedUsers(db, testUsers)
          })
 
-         it(`Respond with 200 and empty lists items`, () => {
+         it(`Responds with 404`, () => {
+            const lists_itemId = 44
             return supertest(app)
-               .get(`/api/lists_items`)
-               .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
-               .expect(200, [])
+               .delete(`/api/lists_items/${lists_itemId}`)
+               .set(`Authorization`, helpers.makeAuthHeader(testUsers[0]))
+               .expect(404, { error: { message: `List Item doesn't exist` }})
+         })
+      })
+
+      context(`Given there are lists items in the DB`, () => {
+         beforeEach(`insert lists items`, () => {
+            helpers.seedListsItemsTable(
+               db, testUsers, testLists, testListsItems
+            )
+         })
+
+         it(`Responds with 204 and removes the lists item`, () => {
+            const idToRemove = 1
+            const expectedListsItem = testListsItems.filter(item => item.id !== idToRemove)
+            return supertest(app)
+               .delete(`/api/lists_items/${idToRemove}`)
+               .set(`Authorization`, helpers.makeAuthHeader(testUsers[0]))
+               .expect(204)
+               .then(res => {
+                  supertest(app)
+                     .get(`/api/lists`)
+                     .set(`Authorization`, helpers.makeAuthHeader(testUsers[0]))
+                     .expect(expectedListsItem)
+               })
          })
       })
    })

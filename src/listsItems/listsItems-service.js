@@ -8,6 +8,13 @@ const ListsItemsService = {
          .where('user_id', user_id)
          .select('*')
    },
+   getListsItemById(db, id) {
+      return db
+         .from('lists_items')
+         .select('*')
+         .where('id', id)
+         .first()
+   },
    // Insert new lists item to lists_items table
    insertItem(db, newItem) {
       return db
