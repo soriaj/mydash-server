@@ -25,25 +25,29 @@ VALUES
       1
    );
 
-INSERT INTO lists_items (name, list_id, user_id)
+INSERT INTO lists_items (name, iscomplete, list_id, user_id)
 VALUES
    (
       '1 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor',
+      false,
       1,
       1
    ),
    (
       '2 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor',
+      false,
       1,
       1
    ),
    (
       '1 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor adadfasd adfda fsdafadsfd',
+      false,
       2,
-      1
+      2
    ),
    (
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor adadfasd adfda fsdafadsfd',
+      '4 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor adadfasd adfda fsdafadsfd',
+      false,
       1,
       1
    );

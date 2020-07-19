@@ -44,32 +44,97 @@ function makeListsArray(users) {
    ]
 }
 
+function makeListsItemsArray() {
+   return [
+      {
+         id: 1,
+         name: '1 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor',
+         iscomplete: false,
+         list_id: 1,
+         user_id: 1
+      },
+      {
+         id: 2,
+         name: '2 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor',
+         iscomplete: false,
+         list_id: 1,
+         user_id: 1
+      },
+      {
+         id: 3,
+         name: '1 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor',
+         iscomplete: false,
+         list_id: 2,
+         user_id: 2
+      },
+      {
+         id: 4,
+         name: '4 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor',
+         iscomplete: false,
+         list_id: 1,
+         user_id: 1
+      },
+   ]
+}
+// function makeListsItemsArray(list, users) {
+//    return [
+//       {
+//          id: 1,
+//          name: '1 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor',
+//          iscomplete: false,
+//          // lists_id: list[0].id,
+//          lists_id: 3,
+//          user_id: users[0].id
+//       },
+//       {
+//          id: 2,
+//          name: '2 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor',
+//          iscomplete: false,
+//          lists_id: list[0].id,
+//          user_id: users[0].id
+//       },
+//       {
+//          id: 3,
+//          name: '1 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor',
+//          iscomplete: false,
+//          lists_id: list[1].id,
+//          user_id: users[0].id
+//       },
+//       {
+//          id: 4,
+//          name: '4 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor',
+//          iscomplete: false,
+//          lists_id: list[0].id,
+//          user_id: users[0].id
+//       },
+//    ]
+// }
+
 function cleanTables(db) {
    return db.transaction(trx => 
-      trx.raw(
-         `TRUNCATE
-         users,
-         lists_items,
-         events,
-         finances,
-         balances,
-         lists
-         `
-      )
-      .then(() =>
-         Promise.all([
-            trx.raw(`ALTER SEQUENCE users_id_seq minvalue 0 START WITH 1`),
-            trx.raw(`SELECT setval('users_id_seq', 0)`),
-         ])
-      )
+      trx.raw(`TRUNCATE lists, lists_items, events, finances, balances, users RESTART IDENTITY CASCADE;`)
+      // .then(() =>
+      //    Promise.all([
+      //       trx.raw(`ALTER SEQUENCE users_id_seq minvalue 0 START WITH 1`),
+      //       trx.raw(`SELECT setval('users_id_seq', 0)`),
+      //    ])
+      // )
    )
 }
 
-function makeFixtures() {
+function makeFixturesLists() {
    const testUsers = makeUsersArray()
    const testLists = makeListsArray(testUsers)
    return { testUsers, testLists }
 }
+
+function makeFixturesListsItems() {
+   const testUsers = makeUsersArray()
+   const testLists = makeListsArray(testUsers)
+   const testListsItems = makeListsItemsArray()
+   return { testUsers, testLists, testListsItems }
+}
+
 
 function seedUsers(db, users) {
    const Users = users.map(user => ({
@@ -85,10 +150,44 @@ function seedUsers(db, users) {
       })
 }
 
+function seedLists(db, lists) {
+   const Lists = lists.map(list => ({
+      ...list
+   }))
+   return db.into('lists').insert(Lists)
+      .then(() => {
+         db.raw(
+            `SELECT setval('lists_id_seq', ?)`,
+            [lists[lists.length - 1].id],
+         )
+      })
+}
+
+function seedListsItems(db, lists_items) {
+   const ListsItems = lists_items.map(items => ({
+      ...items
+   }))
+   return db.into('lists_items').insert(ListsItems)
+      .then(() => {
+         db.raw(
+            `SELECT setval('lists_items_id_seq', ?)`,
+            [lists_items[lists_items.length - 1].id],
+         )
+      })
+}
+
 function seedListsTable(db, users, lists) {
    return db.transaction(async trx => {
       await seedUsers(trx, users)
       await trx.into('lists').insert(lists)
+   })
+}
+
+function seedListsItemsTable(db, users, lists, lists_items) {
+   return db.transaction(async trx => {
+      await seedUsers(trx, users)
+      await seedLists(trx, lists)
+      await seedListsItems(trx, lists_items)
    })
 }
 
@@ -112,8 +211,11 @@ module.exports = {
    makeUsersArray, 
    makeListsArray,
    makeExpectedLists,
-   makeFixtures,
+   makeFixturesLists,
+   makeFixturesListsItems,
    makeAuthHeader, 
-   seedUsers, 
+   seedUsers,
+   seedLists, 
    seedListsTable,
+   seedListsItemsTable,
 }

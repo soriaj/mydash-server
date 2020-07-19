@@ -1,10 +1,7 @@
-
 const knex = require('knex')
 const app = require('../src/app')
 const helpers = require('./test-helpers')
 const supertest = require('supertest')
-const { expect } = require('chai')
-
 
 describe('Lists service object', () => {
    let db
@@ -12,7 +9,7 @@ describe('Lists service object', () => {
    const {
       testUsers,
       testLists
-   } = helpers.makeFixtures()
+   } = helpers.makeFixturesLists()
 
    before(`make db connection instance`, () => {
       db = knex({

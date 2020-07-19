@@ -2,9 +2,17 @@ const xss = require('xss')
 
 const ListsService = {
    // Get and return all items from lists Db table
-   getAllLists(db) {
+   getAllLists(db, user_id) {
       return db
          .from('lists')
+         .where('user_id', user_id)
+         .select('*')
+   },
+   getItemsWithListId(db, user_id, id) {
+      return db
+         .from('lists_items')
+         .where('user_id', user_id)
+         .where('list_id', id)
          .select('*')
    },
    insertList(db, newList) {
