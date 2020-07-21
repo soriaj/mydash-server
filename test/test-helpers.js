@@ -179,7 +179,8 @@ function seedListsItems(db, lists_items) {
 function seedListsTable(db, users, lists) {
    return db.transaction(async trx => {
       await seedUsers(trx, users)
-      await trx.into('lists').insert(lists)
+      // await trx.into('lists').insert(lists)
+      await seedLists(trx, lists)
    })
 }
 

@@ -59,15 +59,11 @@ describe('Lists service object', () => {
 
    // POST Lists tests
    describe('POST /api/lists', () => {
-      beforeEach(`insert lists into db`, () => {
-         helpers.seedListsTable(
-            db,
-            testUsers,
-            testLists
-         )
+      beforeEach(`Insert Users into DB`, () => {
+         helpers.seedUsers(db, testUsers)
       })
 
-      it(`Create a new list and respond with 201 and the new lsit`, function() {
+      it(`Create a new list and respond with 201 and the new list`, function() {
          this.retries(3)
 
          const newList = {
@@ -93,6 +89,44 @@ describe('Lists service object', () => {
             })
       })
    })
-   
-})
 
+   // DELETE Lists test
+   describe(`DELETE /api/lists/:list_id`, () => {
+      context(`Given lists doesn't exist respond with 404`, () => {
+         beforeEach(`insert list into db`, () => {
+            helpers.seedListsTable(
+               db, testUsers, testLists
+            )
+         })
+
+         it(`Responds with 404`, () => {
+            const list_id = 999
+            return supertest(app)
+               .delete(`/api/lists/${list_id}`)
+               .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+               .expect(404, { error: { message: "List doesn't exist" }})
+         })
+      })
+
+      context(`Given there are lists in the DB`, () => {
+         beforeEach('inserts lists into DB', () => {
+            helpers.seedListsTable(db, testUsers, testLists)
+         })
+
+         it(`Responds with 204 and then removes the list`, () => {
+            const listIdToRemove = 2
+            const expectedLists = testLists.filter(list => list.id !== listIdToRemove)
+            return supertest(app)
+               .delete(`/api/lists/${listIdToRemove}`)
+               .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+               .expect(204)
+               .then(res => {
+                  supertest(app)
+                     .get('/api/lists')
+                     .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+                     .expect(expectedLists)
+               })
+         })
+      })
+   })
+})

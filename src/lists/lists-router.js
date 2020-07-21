@@ -44,6 +44,22 @@ listRouter
 
 listRouter
    .route('/:list_id')
+   .all(requireAuth)
+   .all((req, res, next) => {
+      const { list_id } = req.params
+      const user_id = req.user.id
+      const knexInstance = req.app.get('db')
+
+      ListsService.getListById(knexInstance, list_id)
+         .then(list => {
+            if(!list || list.user_id !== user_id) {
+               return res.status(404).json({ error: { message: "List doesn't exist" }})
+            }
+            res.list = list
+            next()
+         })
+         .catch(next)
+   })
    // GET list_id will return list_id list_items
    // Ex: list_id = 1 will return lists_items.list_id = 1
    .get(requireAuth, (req, res, next) => {
@@ -80,6 +96,17 @@ listRouter
                .json(ListsItemsService.serializeListsItems(list_item))
             })
             .catch(next)
+   })
+   .delete(requireAuth, (req, res, next) => {
+      const { list_id } = req.params
+      const user_id = req.user.id
+      const knexInstance = req.app.get('db')
+      
+      ListsService.deleteList(knexInstance, list_id)
+         .then(() => {
+            res.status(204).end()
+         })
+         .catch(next)
    })
 
 module.exports = listRouter

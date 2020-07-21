@@ -4,7 +4,7 @@ const helpers = require('./test-helpers')
 const supertest = require('supertest')
 const { makeExpectedListsItems } = require('./test-helpers')
 
-describe.only('Lists Items service object', () => {
+describe('Lists Items service object', () => {
    let db
 
    const {
