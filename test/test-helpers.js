@@ -8,7 +8,7 @@ function makeUsersArray() {
          full_name: 'Javier Soria',
          email: 'test.mail@email.com',
          password: 'password',
-         date_created: new Date('2020-07-16T16:28:32.615Z'),
+         date_created: new Date('2020-07-16T16:28:32.615Z').toISOString(),
       },
       {
          id: 2,
@@ -16,7 +16,7 @@ function makeUsersArray() {
          full_name: 'User One',
          email: 'user01.mail@email.com',
          password: 'password',
-         date_created: new Date('2020-07-16T16:28:32.615Z'),
+         date_created: new Date('2020-07-16T16:28:32.615Z').toISOString(),
       }
    ]
 }
@@ -76,49 +76,47 @@ function makeListsItemsArray() {
       },
    ]
 }
-// function makeListsItemsArray(list, users) {
-//    return [
-//       {
-//          id: 1,
-//          name: '1 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor',
-//          iscomplete: false,
-//          // lists_id: list[0].id,
-//          lists_id: 3,
-//          user_id: users[0].id
-//       },
-//       {
-//          id: 2,
-//          name: '2 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor',
-//          iscomplete: false,
-//          lists_id: list[0].id,
-//          user_id: users[0].id
-//       },
-//       {
-//          id: 3,
-//          name: '1 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor',
-//          iscomplete: false,
-//          lists_id: list[1].id,
-//          user_id: users[0].id
-//       },
-//       {
-//          id: 4,
-//          name: '4 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor',
-//          iscomplete: false,
-//          lists_id: list[0].id,
-//          user_id: users[0].id
-//       },
-//    ]
-// }
+
+function makeEventsArray(user) {
+   return [
+      {
+         id: 1,
+         date: new Date('2020-07-21T16:28:32.615Z').toISOString(),
+         event_name: "Dinner with folks",
+         event_loc: "Downtown",
+         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+         user_id: user[0].id
+      },
+      {
+         id: 2,
+         date: new Date('2020-07-21T12:28:32.615Z').toISOString(),
+         event_name: "Lunch with friends",
+         event_loc: "iron Tavern",
+         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+         user_id: user[0].id
+      },
+      {
+         id: 3,
+         date: new Date('2020-07-21T10:28:32.615Z').toISOString(),
+         event_name: "Pick Up Flowers",
+         event_loc: "Amy's Flowers",
+         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+         user_id: user[0].id
+      },
+      {
+         id: 4,
+         date: new Date('2020-07-20T07:40:14.036Z').toISOString(),
+         event_name: "Product Pitch",
+         event_loc: "Zoom",
+         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+         user_id: user[1].id
+      },
+   ]
+}
 
 function cleanTables(db) {
    return db.transaction(trx => 
       trx.raw(`TRUNCATE lists, lists_items, events, finances, balances, users RESTART IDENTITY CASCADE;`)
-      // .then(() =>
-      //    Promise.all([
-      //       trx.raw(`ALTER SEQUENCE users_id_seq minvalue 0 START WITH 1`),
-      //       trx.raw(`SELECT setval('users_id_seq', 0)`),
-      //    ])
-      // )
    )
 }
 
@@ -135,6 +133,11 @@ function makeFixturesListsItems() {
    return { testUsers, testLists, testListsItems }
 }
 
+function makeFixturesLEvents() {
+   const testUsers = makeUsersArray()
+   const testEvents = makeEventsArray(testUsers)
+   return { testUsers, testEvents }
+}
 
 function seedUsers(db, users) {
    const Users = users.map(user => ({
@@ -176,10 +179,22 @@ function seedListsItems(db, lists_items) {
       })
 }
 
+function seedEvents(db, events) {
+   const Events = events.map(event => ({
+      ...event
+   }))
+   return db.into('events').insert(Events)
+      .then(() => {
+         db.raw(
+            `SELECT setval('events_id_seq', ?)`,
+            [events[events.length - 1].id]
+         )
+      })
+}
+
 function seedListsTable(db, users, lists) {
    return db.transaction(async trx => {
       await seedUsers(trx, users)
-      // await trx.into('lists').insert(lists)
       await seedLists(trx, lists)
    })
 }
@@ -189,6 +204,13 @@ function seedListsItemsTable(db, users, lists, lists_items) {
       await seedUsers(trx, users)
       await seedLists(trx, lists)
       await seedListsItems(trx, lists_items)
+   })
+}
+
+function seedEventsTable(db, users, events) {
+   return db.transaction(async trx => {
+      await seedUsers(trx, users)
+      await seedEvents(trx, events)
    })
 }
 
@@ -214,9 +236,11 @@ module.exports = {
    makeExpectedLists,
    makeFixturesLists,
    makeFixturesListsItems,
+   makeFixturesLEvents,
    makeAuthHeader, 
    seedUsers,
    seedLists, 
    seedListsTable,
    seedListsItemsTable,
+   seedEventsTable,
 }

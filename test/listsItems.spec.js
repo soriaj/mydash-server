@@ -2,7 +2,6 @@ const knex = require('knex')
 const app = require('../src/app')
 const helpers = require('./test-helpers')
 const supertest = require('supertest')
-const { makeExpectedListsItems } = require('./test-helpers')
 
 describe('Lists Items service object', () => {
    let db
@@ -30,9 +29,7 @@ describe('Lists Items service object', () => {
    //GET lists items test
    describe(`GET /api/lists_items`, () => {
       context(`Given no lists items`, () => {
-         beforeEach(`insert users`, () => {
-            helpers.seedUsers(db, testUsers)
-         })
+         beforeEach(`insert users`, () => helpers.seedUsers(db, testUsers))
 
          it(`Respond with 200 and empty lists items`, () => {
             return supertest(app)
@@ -60,9 +57,7 @@ describe('Lists Items service object', () => {
    //DELETE lists items test
    describe(`DELETE /api/lists_items/:lists_itemId`, () => {
       context(`Given no lists items`, () => {
-         beforeEach(`insert users`, () => {
-            helpers.seedUsers(db, testUsers)
-         })
+         beforeEach(`insert users`, () => helpers.seedUsers(db, testUsers))
 
          it(`Responds with 404`, () => {
             const lists_itemId = 44
@@ -74,11 +69,7 @@ describe('Lists Items service object', () => {
       })
 
       context(`Given there are lists items in the DB`, () => {
-         beforeEach(`insert lists items`, () => {
-            helpers.seedListsItemsTable(
-               db, testUsers, testLists, testListsItems
-            )
-         })
+         beforeEach(`insert lists items`, () => helpers.seedListsItemsTable(db, testUsers, testLists, testListsItems))
 
          it(`Responds with 204 and removes the lists item`, () => {
             const idToRemove = 1

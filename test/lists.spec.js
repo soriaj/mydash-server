@@ -28,9 +28,7 @@ describe('Lists service object', () => {
    // GET Lists tests
    describe('GET /api/lists', () => {
       context(`Given no lists`, () => {
-         beforeEach(`insert users`, () => {
-            helpers.seedUsers(db, testUsers)
-         })
+         beforeEach(`insert users`, () => helpers.seedUsers(db, testUsers))
          
          it(`responds with 200 and empty list`, () => {
             return supertest(app)
@@ -41,14 +39,10 @@ describe('Lists service object', () => {
       })
 
       context(`Given there are lists in the db`, () => {
-         beforeEach(`insert lists`, () => {
-            helpers.seedListsTable(db, testUsers, testLists)
-         })
+         beforeEach(`insert lists`, () => helpers.seedListsTable(db, testUsers, testLists))
 
-         it(`responds with 200 and all of the lists`, () => {
-            const expectedLists = testLists.map(list => 
-               helpers.makeExpectedLists(testUsers, list)
-            )
+         it(`Responds with 200 and all uesrs lists`, () => {
+            const expectedLists = testLists.filter(list => list.user_id === testUsers[0].id)
             return supertest(app)
                .get('/api/lists')
                .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
@@ -59,9 +53,7 @@ describe('Lists service object', () => {
 
    // POST Lists tests
    describe('POST /api/lists', () => {
-      beforeEach(`Insert Users into DB`, () => {
-         helpers.seedUsers(db, testUsers)
-      })
+      beforeEach(`Insert Users into DB`, () => helpers.seedUsers(db, testUsers))
 
       it(`Create a new list and respond with 201 and the new list`, function() {
          this.retries(3)
@@ -93,11 +85,7 @@ describe('Lists service object', () => {
    // DELETE Lists test
    describe(`DELETE /api/lists/:list_id`, () => {
       context(`Given lists doesn't exist respond with 404`, () => {
-         beforeEach(`insert list into db`, () => {
-            helpers.seedListsTable(
-               db, testUsers, testLists
-            )
-         })
+         beforeEach(`insert list into db`, () => helpers.seedListsTable(db, testUsers, testLists))
 
          it(`Responds with 404`, () => {
             const list_id = 999
@@ -109,9 +97,7 @@ describe('Lists service object', () => {
       })
 
       context(`Given there are lists in the DB`, () => {
-         beforeEach('inserts lists into DB', () => {
-            helpers.seedListsTable(db, testUsers, testLists)
-         })
+         beforeEach('inserts lists into DB', () => helpers.seedListsTable(db, testUsers, testLists))
 
          it(`Responds with 204 and then removes the list`, () => {
             const listIdToRemove = 2

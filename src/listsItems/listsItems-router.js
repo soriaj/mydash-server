@@ -15,8 +15,7 @@ listsItemsRouter
       const user_id = req.user.id
        // Call Get All Lists items from ListsItemsService
        ListsItemsService.getAllListsItems(knexInstance, user_id)
-          .then(lists_items => res.json(lists_items.map(ListsItemsService.serializeListsItems)))
-          .catch(next)
+          .then(lists_items => res.json(lists_items.map(ListsItemsService.serializeListsItems))).catch(next)
    })
    // .post(requireAuth, bodyParser, (req, res, next) => {
    //    const { name } = req.body
@@ -26,7 +25,7 @@ listsItemsRouter
       
    //    for(const [k, v] of Object.entries(newListItem))
    //       if(v == null) {
-   //          return res.status(400).json({ error: `Missing '${key} in the request body`})
+   //          return res.status(400).json({ error: `Missing '${k} in the request body`})
    //       }
          
    //       newListItem.iscomplete = false
@@ -60,9 +59,7 @@ listsItemsRouter
          })
          .catch(next)
    })
-   .get((req, res) => {
-      res.json(ListsItemsService.serializeListsItems(res.list_item))
-   })
+   .get((req, res) => res.json(ListsItemsService.serializeListsItems(res.list_item)))
    // .post(requireAuth, bodyParser, (req, res, next) => {
    //    const { name } = req.body
    //    const newListItem = { name }
@@ -71,7 +68,7 @@ listsItemsRouter
       
    //    for(const [k, v] of Object.entries(newListItem))
    //       if(v == null) {
-   //          return res.status(400).json({ error: `Missing '${key} in the request body`})
+   //          return res.status(400).json({ error: `Missing '${k} in the request body`})
    //       }
          
    //       newListItem.iscomplete = false
@@ -90,10 +87,7 @@ listsItemsRouter
       const { list_itemId } = req.params
       const knexInstance = req.app.get('db')
       ListsItemsService.deleteItem(knexInstance, list_itemId)
-         .then(() => {
-            res.status(204).end()
-         })
-         .catch(next)
+         .then(() => res.status(204).end()).catch(next)
    })
 
 module.exports = listsItemsRouter

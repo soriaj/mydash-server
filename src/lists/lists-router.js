@@ -68,9 +68,7 @@ listRouter
       const knexInstance = req.app.get('db')
 
       ListsService.getItemsWithListId(knexInstance, user_id, list_id)
-         .then(items => {
-            res.json(items.map(ListsItemsService.serializeListsItems))
-         })
+         .then(items => res.json(items.map(ListsItemsService.serializeListsItems)))
    })
    // POST list_id will add new lists_items with lists_items.list_id equal to req.params
    // Ex: lists_id = 1 will add new lists_items and associate it with lists_items.list_id = 1
@@ -82,7 +80,7 @@ listRouter
       
       for(const [k, v] of Object.entries(newListItem))
          if(v == null) {
-            return res.status(400).json({ error: `Missing '${key} in the request body`})
+            return res.status(400).json({ error: `Missing '${k} in the request body`})
          }
          
          newListItem.iscomplete = false
@@ -103,10 +101,7 @@ listRouter
       const knexInstance = req.app.get('db')
       
       ListsService.deleteList(knexInstance, list_id)
-         .then(() => {
-            res.status(204).end()
-         })
-         .catch(next)
+         .then(() => res.status(204).end()).catch(next)
    })
 
 module.exports = listRouter
