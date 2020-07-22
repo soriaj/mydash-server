@@ -135,6 +135,21 @@ function makeFinancesArray(users) {
    ]
 }
 
+function makeBalancesArray(users) {
+   return [
+      {
+         id: 1,
+         balance: '$0.00',
+         user_id: users[0].id
+      },
+      {
+         id: 2,
+         balance: '$0.00',
+         user_id: users[1].id
+      }
+   ]
+}
+
 function cleanTables(db) {
    return db.transaction(trx => 
       trx.raw(`TRUNCATE lists, lists_items, events, finances, balances, users RESTART IDENTITY CASCADE;`)
@@ -164,6 +179,12 @@ function makeFixturesFinances() {
    const testUsers = makeUsersArray()
    const testFinances = makeFinancesArray(testUsers)
    return { testUsers, testFinances }
+}
+
+function makeFixturesBalances() {
+   const testUsers = makeUsersArray()
+   const testBalances = makeBalancesArray(testUsers)
+   return { testUsers, testBalances }
 }
 
 function seedUsers(db, users) {
@@ -232,6 +253,19 @@ function seedFinances(db, finances) {
       })
 }
 
+function seedBalances(db, balances) {
+   const Balances = balances.map(balance => ({
+      ...balance
+   }))
+   return db.into('balances').insert(Balances)
+      .then(() => {
+         db.raw(
+            `SELECT setval('balances_id_seq', ?)`,
+            [balances[balances.length - 1].id]
+         )
+      })
+}
+
 function seedListsTable(db, users, lists) {
    return db.transaction(async trx => {
       await seedUsers(trx, users)
@@ -261,6 +295,12 @@ function seedFinancesTable(db, users, finances) {
    })
 }
 
+function seedBalancesTable(db, users, balances) {
+   return db.transaction(async trx => {
+      await seedUsers(trx, users)
+      await seedBalances(trx, balances)
+   })
+}
 function makeExpectedLists(users, lists) {
    const user = users.find(user => user.id === lists.user_id)
    return {
@@ -273,6 +313,7 @@ function makeExpectedLists(users, lists) {
 
 function makeAuthHeader(user) {
    const token = Buffer.from(`${user.user_name}:${user.password}`).toString('base64')
+   console.log(`Token is: `, token)
    return `Basic ${token}`
 }
 
@@ -285,6 +326,7 @@ module.exports = {
    makeFixturesListsItems,
    makeFixturesEvents,
    makeFixturesFinances,
+   makeFixturesBalances,
    makeAuthHeader, 
    seedUsers,
    seedLists, 
@@ -292,4 +334,5 @@ module.exports = {
    seedListsItemsTable,
    seedEventsTable,
    seedFinancesTable,
+   seedBalancesTable,
 }
