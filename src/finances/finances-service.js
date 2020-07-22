@@ -1,11 +1,18 @@
 const xss = require('xss')
 
-const FinanceService = {
+const FinancesService = {
    getAllFinances(db, user_id) {
       return db
          .from('finances')
          .where('user_id', user_id)
          .select('*')
+   },
+   insertTransaction(db, newTransaction) {
+      return db
+         .insert(newTransaction)
+         .into('finances')
+         .returning('*')
+         .then(rows => rows[0])
    },
    serializeFinances(finances) {
       return {
@@ -19,4 +26,4 @@ const FinanceService = {
    }
 }
 
-module.exports = FinanceService
+module.exports = FinancesService

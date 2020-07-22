@@ -54,5 +54,63 @@ describe.only('Finances service object', () => {
       })
    })
 
+    // POST Finances
+    describe(`POST /api/finances`, () => {
+      context(`Given no finances`, () => {
+         beforeEach(`insert users`, () => helpers.seedUsers(db, testUsers))
+
+         it(`Create a new transaction, responding with 201 and the new transaction`, function() {
+            this.retries(3)
+
+            const newTransaction = {
+               date: new Date(),
+               type: "credit",
+               description: "Side Gig",
+               amount: "$2,550.35",
+               user_id: testUsers[0].id
+            }
+            return supertest(app)
+               .post(`/api/finances`)
+               .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+               .send(newTransaction)
+               .expect(201)
+               .expect(res => {
+                  const expectedDate = new Date(newTransaction.date).toISOString()
+                  const actualDate = new Date(res.body.date).toISOString()
+                  expect(res.body).to.have.property('id')
+                  expect(expectedDate).to.eql(actualDate)
+                  expect(res.body.type).to.eql(newTransaction.type)
+                  expect(res.body.description).to.eql(newTransaction.description)
+                  expect(res.body.amount).to.eql(newTransaction.amount)
+                  expect(res.header.location).to.eql(`/api/finances/${res.body.id}`)
+               })
+               .then(postRes => {
+                  supertest(app)
+                     .get(`/api/finances/${postRes.body.id}`)
+                     .expect(postRes.body)
+               })
+         })
+
+         const required = ['date', 'type', 'amount']
+         required.forEach(field => {
+            const newTransaction = {
+               date: new Date(),
+               type: "credit",
+               description: "Side Gig",
+               amount: "$2,550.35",
+               user_id: testUsers[0].id
+            }
+            it(`Responds with 400 and error message when the '${field}' is missing`, () => {
+               delete newTransaction[field]
+               return supertest(app)
+                  .post(`/api/finances`)
+                  .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+                  .send(newTransaction)
+                  .expect(400, { error: `Missing '${field}' in request body` })
+            })
+         })
+      })
+   })
+
 // END tests  
 })
