@@ -32,13 +32,32 @@ financesRouter
 
       newTransaction.user_id = req.user.id
       FinancesService.insertTransaction(knexInstance, newTransaction)
-         .then(finance => {
+         .then(trx => {
             res.status(201)
-            res.location(path.posix.join(req.originalUrl, `/${finance.id}`))
-            .json(FinancesService.serializeFinances(finance))
+            res.location(path.posix.join(req.originalUrl, `/${trx.id}`))
+            .json(FinancesService.serializeFinances(trx))
          })
          .catch(next)      
    })
 
+financesRouter
+   .route('/:finance_id')
+   .all(requireAuth)
+   .all((req, res, next) => {
+      const { finance_id } = req.params
+      const user_id = req.user.id
+      const knexInstance = req.app.get('db')
+
+      FinancesService.getFinanceById(knexInstance, finance_id)
+         .then(trx => {
+            if(!trx || trx.user_id !== user_id) {
+               return res.status(404).json({ error: { message: `Transaction doesn't exist` }})
+            }
+            res.trx = trx
+            next()
+         })
+         .catch(next)
+   })
+   .get((req, res) => res.json(FinancesService.serializeFinances(res.trx)))
 
 module.exports = financesRouter

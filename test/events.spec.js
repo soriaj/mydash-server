@@ -55,9 +55,9 @@ describe('Events service object', () => {
    })
 
     // GET Events by id
-    describe(`GET /api/evets/:event_id`, () => {
+   describe(`GET /api/evets/:event_id`, () => {
       context('Given no events', () => {
-         beforeEach(`insert useres`, () => helpers.seedUsers(db, testUsers))
+         beforeEach(`insert users`, () => helpers.seedUsers(db, testUsers))
          
          it(`Responds with 404`, () => {
             const eventId = 1234

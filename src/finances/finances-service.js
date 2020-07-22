@@ -7,6 +7,13 @@ const FinancesService = {
          .where('user_id', user_id)
          .select('*')
    },
+   getFinanceById(db, id) {
+      return db
+         .select('*')
+         .from('finances')
+         .where('id', id)
+         .first()
+   },
    insertTransaction(db, newTransaction) {
       return db
          .insert(newTransaction)

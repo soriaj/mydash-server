@@ -4,9 +4,8 @@ const helpers = require('./test-helpers')
 const supertest = require('supertest')
 const setTZ = require('set-tz')
 const { expect } = require('chai')
-// setTZ('UTC')
 
-describe.only('Finances service object', () => {
+describe('Finances service object', () => {
    let db
 
    const {
@@ -54,8 +53,36 @@ describe.only('Finances service object', () => {
       })
    })
 
-    // POST Finances
-    describe(`POST /api/finances`, () => {
+   // GET Finance transaction by ID (trxId)
+   describe(`GET /api/finances/:finance_id`, () => {
+      context('Given no finances', () => {
+         beforeEach(`insert users`, () => helpers.seedUsers(db, testUsers))
+         
+         it(`Responds with 404`, () => {
+            const trxId = 1234
+            return supertest(app)
+               .get(`/api/finances/${trxId}`)
+               .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+               .expect(404, { error: { message: `Transaction doesn't exist` }})
+         })
+      })
+
+      context(`Given there are finance transactions in the db`, () => {
+         beforeEach('insert finances', () => helpers.seedFinancesTable(db, testUsers, testFinances))
+
+         it(`Responds with 200 and the specified transaction`, () => {
+            const trxId = 1
+            const expectedTransaction = testFinances.find(trx => trx.id === trxId)
+            return supertest(app)
+               .get(`/api/finances/${trxId}`)
+               .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+               .expect(200, expectedTransaction)
+         })
+      })
+   })
+
+   // POST Finances
+   describe(`POST /api/finances`, () => {
       context(`Given no finances`, () => {
          beforeEach(`insert users`, () => helpers.seedUsers(db, testUsers))
 
