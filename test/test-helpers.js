@@ -114,6 +114,27 @@ function makeEventsArray(user) {
    ]
 }
 
+function makeFinancesArray(users) {
+   return [
+      {
+         id: 1,
+         date: new Date('"2020-06-07T06:40:12.036Z'),
+         type: "credit",
+         description: "Paycheck",
+         amount: 1500.00,
+         user_id: users[0].id
+      },
+      {
+         id: 2,
+         date: new Date('2020-06-07T06:45:12.027Z'),
+         type: "debit",
+         description: "Groceries",
+         amount: 100.00,
+         user_id: users[0].id
+      }
+   ]
+}
+
 function cleanTables(db) {
    return db.transaction(trx => 
       trx.raw(`TRUNCATE lists, lists_items, events, finances, balances, users RESTART IDENTITY CASCADE;`)
@@ -133,10 +154,16 @@ function makeFixturesListsItems() {
    return { testUsers, testLists, testListsItems }
 }
 
-function makeFixturesLEvents() {
+function makeFixturesEvents() {
    const testUsers = makeUsersArray()
    const testEvents = makeEventsArray(testUsers)
    return { testUsers, testEvents }
+}
+
+function makeFixturesFinances() {
+   const testUsers = makeUsersArray()
+   const testFinances = makeFinancesArray(testUsers)
+   return { testUsers, testFinances }
 }
 
 function seedUsers(db, users) {
@@ -236,7 +263,8 @@ module.exports = {
    makeExpectedLists,
    makeFixturesLists,
    makeFixturesListsItems,
-   makeFixturesLEvents,
+   makeFixturesEvents,
+   makeFixturesFinances,
    makeAuthHeader, 
    seedUsers,
    seedLists, 

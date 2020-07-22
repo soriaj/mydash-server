@@ -6,13 +6,13 @@ const setTZ = require('set-tz')
 const { expect } = require('chai')
 setTZ('UTC')
 
-describe.only('Events service object', () => {
+describe('Events service object', () => {
    let db
 
    const {
       testUsers,
       testEvents
-   } = helpers.makeFixturesLEvents()
+   } = helpers.makeFixturesEvents()
 
    before(`Make db connection instance`, () => {
       db = knex({
@@ -163,7 +163,7 @@ describe.only('Events service object', () => {
    })
 
    // PATCH Event
-   describe.only(`PATCH /api/events/:event_id`, () => {
+   describe(`PATCH /api/events/:event_id`, () => {
       context(`Given no events`, () => {
          beforeEach('insert users', () => helpers.seedUsers(db, testUsers))
 
