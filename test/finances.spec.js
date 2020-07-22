@@ -4,7 +4,7 @@ const helpers = require('./test-helpers')
 const supertest = require('supertest')
 const setTZ = require('set-tz')
 const { expect } = require('chai')
-setTZ('UTC')
+// setTZ('UTC')
 
 describe.only('Finances service object', () => {
    let db
@@ -38,6 +38,18 @@ describe.only('Finances service object', () => {
                .get('/api/finances')
                .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
                .expect(200, [])
+         })
+      })
+
+      context(`Given there are finances in the db`, () => {
+         beforeEach(`insert finances`, () => helpers.seedFinancesTable(db, testUsers, testFinances))
+
+         it(`Responds with 200 and users finances`, () => {
+            const expectedFinances = testFinances.filter(finances => finances.user_id === testUsers[0].id)
+            return supertest(app)
+               .get(`/api/finances`)
+               .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+               .expect(200, expectedFinances)
          })
       })
    })

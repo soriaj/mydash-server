@@ -118,18 +118,18 @@ function makeFinancesArray(users) {
    return [
       {
          id: 1,
-         date: new Date('"2020-06-07T06:40:12.036Z'),
+         date: new Date('2020-06-07T06:40:12.036Z').toISOString(),
          type: "credit",
          description: "Paycheck",
-         amount: 1500.00,
+         amount: "$1,500.00",
          user_id: users[0].id
       },
       {
          id: 2,
-         date: new Date('2020-06-07T06:45:12.027Z'),
+         date: new Date('2020-06-07T06:45:12.027Z').toISOString(),
          type: "debit",
          description: "Groceries",
-         amount: 100.00,
+         amount: "$100.00",
          user_id: users[0].id
       }
    ]
@@ -219,6 +219,19 @@ function seedEvents(db, events) {
       })
 }
 
+function seedFinances(db, finances) {
+   const Finances = finances.map(finance => ({
+      ...finance
+   }))
+   return db.into('finances').insert(Finances)
+      .then(() => {
+         db.raw(
+            `SELECT setval('finances_id_seq', ?)`,
+            [finances[finances.length - 1].id]
+         )
+      })
+}
+
 function seedListsTable(db, users, lists) {
    return db.transaction(async trx => {
       await seedUsers(trx, users)
@@ -238,6 +251,13 @@ function seedEventsTable(db, users, events) {
    return db.transaction(async trx => {
       await seedUsers(trx, users)
       await seedEvents(trx, events)
+   })
+}
+
+function seedFinancesTable(db, users, finances) {
+   return db.transaction(async trx => {
+      await seedUsers(trx, users)
+      await seedFinances(trx, finances)
    })
 }
 
@@ -271,4 +291,5 @@ module.exports = {
    seedListsTable,
    seedListsItemsTable,
    seedEventsTable,
+   seedFinancesTable,
 }
