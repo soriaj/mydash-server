@@ -14,8 +14,11 @@ const BalancesService = {
          .where('id', id)
          .first()
    },
-   updateBalance(db, user_id, updatedBalance) {
-
+   updateBalance(db, newBalance, id) {
+      return db
+         .from('balances')
+         .where('id', id)
+         .update(newBalance)
    },
    serializeBalances(balances) {
       return {

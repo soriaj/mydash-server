@@ -206,7 +206,7 @@ describe('Events service object', () => {
                })
          })
 
-         it(`Responds with 400 when required fields are not add`, () => {
+         it(`Responds with 400 when required fields are not add provided`, () => {
             const eventIdToUpdate = 1
             return supertest(app)
                .patch(`/api/events/${eventIdToUpdate}`)
