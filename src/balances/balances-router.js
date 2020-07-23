@@ -17,4 +17,25 @@ balancesRouter
          .catch(next)
    })
 
+balancesRouter
+   .route('/:balance_id')
+   .all(requireAuth)
+   .all((req, res, next) => {
+      const knexInstance = req.app.get('db')
+      const { balance_id } = req.params
+      const user_id = req.user.id
+
+      BalancesService.getBalanceById(knexInstance, balance_id)
+         .then(balance => {
+            if(!balance || balance.user_id !== user_id) {
+               return res.status(404).json({ error: { message: `Balance doesn't exist` }})
+            }
+            res.balance = balance
+            next()
+         })
+         .catch(next)
+   })
+   .get((req, res) => res.json(BalancesService.serializeBalances(res.balance)))
+
+
 module.exports = balancesRouter

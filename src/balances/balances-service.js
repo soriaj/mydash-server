@@ -7,6 +7,13 @@ const BalancesService = {
          .from('balances')
          .where('user_id', user_id)
    },
+   getBalanceById(db, id) {
+      return db
+         .select('*')
+         .from('balances')
+         .where('id', id)
+         .first()
+   },
    updateBalance(db, user_id, updatedBalance) {
 
    },

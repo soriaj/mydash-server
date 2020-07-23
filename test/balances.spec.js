@@ -5,7 +5,7 @@ const supertest = require('supertest')
 const setTZ = require('set-tz')
 const { expect } = require('chai')
 
-describe.only('Balances service object', () => {
+describe('Balances service object', () => {
    let db
 
    const {
@@ -47,6 +47,34 @@ describe.only('Balances service object', () => {
             const expectedBalance = testBalances.filter(balance => balance.user_id === testUsers[0].id)
             return supertest(app)
                .get('/api/balances')
+               .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+               .expect(200, expectedBalance)
+         })
+      })
+   })
+
+   // Get Balances by id
+   describe(`Get /api/balances/:balance_id`, () => {
+      context(`Given no balances`, () => {
+         beforeEach(`insert users`, () => helpers.seedUsers(db, testUsers))
+
+         it(`Responds with 404`, () => {
+            const balanceId = 999
+            return supertest(app)
+               .get(`/api/balances/${balanceId}`)
+               .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+               .expect(404, { error: { message: `Balance doesn't exist` }})
+         })
+      })
+
+      context(`Given there are balacnes in the db`, () => {
+         beforeEach(`insert balances`, () => helpers.seedBalancesTable(db, testUsers, testBalances))
+
+         it(`Responds with 200 and the specified balance`, () => {
+            const balanceId = 1
+            const expectedBalance = testBalances.find(balance => balance.id === balanceId)
+            return supertest(app)
+               .get(`/api/balances/${balanceId}`)
                .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
                .expect(200, expectedBalance)
          })

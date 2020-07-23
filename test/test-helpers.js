@@ -313,7 +313,6 @@ function makeExpectedLists(users, lists) {
 
 function makeAuthHeader(user) {
    const token = Buffer.from(`${user.user_name}:${user.password}`).toString('base64')
-   console.log(`Token is: `, token)
    return `Basic ${token}`
 }
 
