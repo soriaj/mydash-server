@@ -23,7 +23,7 @@ eventsRouter
       const newEvent = { date, event_name, event_loc, description }
       const knexInstance = req.app.get('db')
 
-      // Check event values are no null. If they are event has missing item
+      // Check event values are not null. If they are event has missing item
       for(const [k, v] of Object.entries(newEvent)) {
          if(v == null) {
             return res.status(400).json({ error: `Missing '${k}' in request body` })

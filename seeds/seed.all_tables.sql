@@ -84,24 +84,24 @@ VALUES
    (
       'credit',
       'Paycheck',
-      1500.00,
+      '$1,500.00',
       1 
    ),
    (
       'debit',
       'Grocercies',
-      100.00,
+      '$100.00',
       1 
    );
 
 INSERT INTO balances (balance, user_id)
 VALUES
    (
-      0.00,
+      '$0.00',
       1
    ),
    (
-      21500.00,
+      '$21,500.00',
       2
    );
 
