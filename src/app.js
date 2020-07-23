@@ -9,6 +9,7 @@ const listsItemsRouter = require('./listsItems/listsItems-router')
 const eventsRouter = require('./events/events-router')
 const financesRouter = require('./finances/finances-router')
 const balancesRouter = require('./balances/balances-router')
+const usersRouter = require('./users/users-router')
 
 const app = express()
 
@@ -23,10 +24,7 @@ app.use('/api/lists_items', listsItemsRouter)
 app.use('/api/events', eventsRouter)
 app.use('/api/finances', financesRouter)
 app.use('/api/balances', balancesRouter)
-
-app.get('/', (req, res) => {
-   res.send('Hello, World!')
-})
+app.use('/api/users', usersRouter)
 
 app.use(function errorHandler(error, req, res, next) {
    let response

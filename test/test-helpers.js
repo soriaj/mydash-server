@@ -156,6 +156,10 @@ function cleanTables(db) {
    )
 }
 
+function makeFixturesUsers() {
+   const testUsers = makeUsersArray()
+   return { testUsers }
+}
 function makeFixturesLists() {
    const testUsers = makeUsersArray()
    const testLists = makeListsArray(testUsers)
@@ -321,6 +325,7 @@ module.exports = {
    makeUsersArray, 
    makeListsArray,
    makeExpectedLists,
+   makeFixturesUsers,
    makeFixturesLists,
    makeFixturesListsItems,
    makeFixturesEvents,
