@@ -2,7 +2,6 @@ const knex = require('knex')
 const app = require('../src/app')
 const helpers = require('./test-helpers')
 const supertest = require('supertest')
-const setTZ = require('set-tz')
 const { expect } = require('chai')
 
 describe('Finances service object', () => {

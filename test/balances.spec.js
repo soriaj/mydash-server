@@ -2,10 +2,9 @@ const knex = require('knex')
 const app = require('../src/app')
 const helpers = require('./test-helpers')
 const supertest = require('supertest')
-const setTZ = require('set-tz')
 const { expect } = require('chai')
 
-describe.only('Balances service object', () => {
+describe('Balances service object', () => {
    let db
 
    const {
@@ -82,7 +81,7 @@ describe.only('Balances service object', () => {
    })
 
    // PATCH Balances by id
-   describe.only(`Patch /api/balances/:balance_id`, () => {
+   describe(`Patch /api/balances/:balance_id`, () => {
       context(`Given no balances`, () => {
          beforeEach(`insert users`, () => helpers.seedUsers(db, testUsers))
 
