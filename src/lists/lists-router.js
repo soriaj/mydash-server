@@ -1,7 +1,6 @@
 const express = require('express')
 const path = require('path')
 const ListsService = require('./lists-service')
-// const ListsItemsService = require('../listsItems/lists-service')
 const ListsItemsService = require('../listsItems/listsItems-service')
 const { requireAuth } = require('../middleware/basic-auth')
 
@@ -21,8 +20,8 @@ listRouter
          .catch(next)
    })
    .post(requireAuth, bodyParser, (req, res, next) => {
-      const { name, content } = req.body
-      const newList = { name, content }
+      const { name } = req.body
+      const newList = { name }
       const knexInstance = req.app.get('db')
 
       // Check newList doesn't contain null values

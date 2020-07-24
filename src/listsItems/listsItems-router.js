@@ -17,29 +17,27 @@ listsItemsRouter
        ListsItemsService.getAllListsItems(knexInstance, user_id)
           .then(lists_items => res.json(lists_items.map(ListsItemsService.serializeListsItems))).catch(next)
    })
-   // .post(requireAuth, bodyParser, (req, res, next) => {
-   //    const { name } = req.body
-   //    const newListItem = { name }
-   //    const { list_id } = req.params
-   //    const knexInstance = req.app.get('db')
+   .post(requireAuth, bodyParser, (req, res, next) => {
+      const { name, list_id } = req.body
+      const newListItem = { name, list_id }
+      const knexInstance = req.app.get('db')
       
-   //    for(const [k, v] of Object.entries(newListItem))
-   //       if(v == null) {
-   //          return res.status(400).json({ error: `Missing '${k} in the request body`})
-   //       }
+      for(const [k, v] of Object.entries(newListItem))
+         if(v == null) {
+            return res.status(400).json({ error: `Missing '${k} in the request body`})
+         }
          
-   //       newListItem.iscomplete = false
-   //       newListItem.user_id = req.user.id
-   //       newListItem.list_id = 2
+         newListItem.iscomplete = false
+         newListItem.user_id = req.user.id
 
-   //       ListsItemsService.insertItem(knexInstance, newListItem)
-   //          .then(list_item => {
-   //             res.status(201)
-   //             .location(path.posix.join(req.originalUrl, `/${list_item.id}`))
-   //             .json(ListsItemsService.serializeListsItems(list_item))
-   //          })
-   //          .catch(next)
-   // })
+         ListsItemsService.insertItem(knexInstance, newListItem)
+            .then(list_item => {
+               res.status(201)
+               .location(path.posix.join(req.originalUrl, `/${list_item.id}`))
+               .json(ListsItemsService.serializeListsItems(list_item))
+            })
+            .catch(next)
+   })
 
 listsItemsRouter
    .route('/:list_itemId')
@@ -60,29 +58,17 @@ listsItemsRouter
          .catch(next)
    })
    .get((req, res) => res.json(ListsItemsService.serializeListsItems(res.list_item)))
-   // .post(requireAuth, bodyParser, (req, res, next) => {
-   //    const { name } = req.body
-   //    const newListItem = { name }
-   //    const { list_id } = req.params
-   //    const knexInstance = req.app.get('db')
-      
-   //    for(const [k, v] of Object.entries(newListItem))
-   //       if(v == null) {
-   //          return res.status(400).json({ error: `Missing '${k} in the request body`})
-   //       }
-         
-   //       newListItem.iscomplete = false
-   //       newListItem.user_id = req.user.id
-   //       newListItem.list_id = 1
+   // PATCH lists_item as complete or not
+   .patch(requireAuth, bodyParser, (req, res, next) => {
+      const { iscomplete } = req.body
+      const listsItemToUpdate = { iscomplete }
+      const knexInstance = req.app.get('db')
+      const { list_itemId} = req.params
 
-   //       ListsItemsService.insertItem(knexInstance, newListItem)
-   //          .then(list_item => {
-   //             res.status(201)
-   //             .location(path.posix.join(req.originalUrl, `/${list_item.id}`))
-   //             .json(ListsItemsService.serializeListsItems(list_item))
-   //          })
-   //          .catch(next)
-   // })
+      listsItemToUpdate.user_id = req.user.id
+      ListsItemsService.updateItem(knexInstance, listsItemToUpdate, list_itemId)
+         .then(() => res.status(204).end()).catch(next)
+   })
    .delete(requireAuth, (req, res, next) => {
       const { list_itemId } = req.params
       const knexInstance = req.app.get('db')

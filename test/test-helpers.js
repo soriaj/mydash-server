@@ -26,19 +26,16 @@ function makeListsArray(users) {
       {
          id: 1,
          name: 'Packing Items',
-         content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
          user_id: users[0].id
       },
       {
          id: 2,
          name: 'ToDo',
-         content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
          user_id: users[0].id
       },
       {
          id: 3,
          name: 'Contacts',
-         content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
          user_id: users[0].id
       }
    ]

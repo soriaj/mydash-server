@@ -10,6 +10,7 @@ const eventsRouter = require('./events/events-router')
 const financesRouter = require('./finances/finances-router')
 const balancesRouter = require('./balances/balances-router')
 const usersRouter = require('./users/users-router')
+const authRouter = require('./auth/auth-router')
 
 const app = express()
 
@@ -25,6 +26,7 @@ app.use('/api/events', eventsRouter)
 app.use('/api/finances', financesRouter)
 app.use('/api/balances', balancesRouter)
 app.use('/api/users', usersRouter)
+app.use('/api/auth', authRouter)
 
 app.use(function errorHandler(error, req, res, next) {
    let response

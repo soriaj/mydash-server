@@ -7,21 +7,18 @@ VALUES
    ('javier', 'Javier Soria', 'test.mail@email.com', '$2a$04$iVuExQgNmo0lmwtMytf5buVKb/qzxSgNmYB7AoPJgTyGulfwLW.9K'),
    ('user01', 'User One', 'user01.mail@email.com', '$2a$04$iVuExQgNmo0lmwtMytf5buVKb/qzxSgNmYB7AoPJgTyGulfwLW.9K');
 
-INSERT INTO lists (name, content, user_id)
+INSERT INTO lists (name, user_id)
 VALUES
    (
       'Packing Items',
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
       1
    ),
    (
       'ToDo',
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
       1
    ),
    (
       'Contacts',
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
       1
    );
 
