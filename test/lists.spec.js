@@ -60,7 +60,6 @@ describe('Lists service object', () => {
 
          const newList = {
             name: 'New List Title',
-            content: 'New List Content',
             user_id: testUsers[0].id
          }
          return supertest(app)
@@ -71,7 +70,6 @@ describe('Lists service object', () => {
             .expect(res => {
                expect(res.body).to.have.property('id')
                expect(res.body.name).to.eql(newList.name)
-               expect(res.body.content).to.eql(newList.content)
                expect(res.headers.location).to.eql(`/api/lists/${res.body.id}`)
             })
             .then(postRes => {

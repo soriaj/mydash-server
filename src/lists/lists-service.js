@@ -42,7 +42,6 @@ const ListsService = {
       return {
          id: list.id,
          name: xss(list.name),
-         content: xss(list.content),
          user_id: list.user_id
       }
    }

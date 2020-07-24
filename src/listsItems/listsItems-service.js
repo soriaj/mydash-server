@@ -25,6 +25,12 @@ const ListsItemsService = {
             return rows[0]
          })
    },
+   updateItem(db, newItemData, id) {
+      return db
+         .from('lists_items')
+         .where('id', id)
+         .update(newItemData)
+   },
    // Delete lists_items that match id
    deleteItem(db, id) {
       return db
