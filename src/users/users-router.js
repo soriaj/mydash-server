@@ -1,12 +1,22 @@
 const express = require('express')
 const path = require('path')
 const UsersService = require('./users-service')
+const { requireAuth } = require('../middleware/basic-auth')
 
 const usersRouter = express.Router()
 const bodyParser = express.json()
 
 usersRouter
-   .post('/', bodyParser, (req, res, next) => {
+   .route('/')
+   .get(requireAuth, (req, res, next) => {
+      const user_id = req.user.id
+      const knexInstance = req.app.get('db')
+
+      UsersService.returnUserFullName(knexInstance, user_id)
+         .then(user => res.json(user))
+         .catch(next)
+   })
+   .post(bodyParser, (req, res, next) => {
       const { full_name, email, user_name, password } = req.body
       const newUser = { full_name, email, user_name, password }
       const knexInstance = req.app.get('db')

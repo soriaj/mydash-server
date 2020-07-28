@@ -37,6 +37,12 @@ const UsersService = {
             return user
          })
    },
+   returnUserFullName(db, user_id) {
+      return db
+         .select('full_name', 'email')
+         .from('users')
+         .where('id', user_id)
+   },
    serializeUser(user) {
       return {
          id: user.id,
