@@ -43,8 +43,6 @@ balancesRouter
       const { balance_id } = req.params
       const user_id = req.user.id
 
-      console.log(`Balance is:`, balance)
-
       const balanceValuesNotZero = Object.values(balanceToUpdate).filter(Boolean).length
       if(balanceValuesNotZero === 0) {
          return res.status(400).json({

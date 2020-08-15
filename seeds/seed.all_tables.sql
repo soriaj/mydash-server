@@ -94,11 +94,11 @@ VALUES
 INSERT INTO balances (balance, user_id)
 VALUES
    (
-      '$0.00',
+      0.00,
       1
    ),
    (
-      '$21,500.00',
+      0.00,
       2
    );
 
