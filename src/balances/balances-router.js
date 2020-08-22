@@ -43,15 +43,6 @@ balancesRouter
       const { balance_id } = req.params
       const user_id = req.user.id
 
-      const balanceValuesNotZero = Object.values(balanceToUpdate).filter(Boolean).length
-      if(balanceValuesNotZero === 0) {
-         return res.status(400).json({
-            error:
-               {
-                  message: `Request body must contain 'balance'`
-               }
-         })
-      }
       balanceToUpdate.user_id = user_id
       BalancesService.updateBalance(knexInstance, balanceToUpdate, balance_id)
          .then(() => res.status(204).end()).catch(next)
