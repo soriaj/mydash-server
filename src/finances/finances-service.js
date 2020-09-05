@@ -1,4 +1,5 @@
 const xss = require('xss')
+const BalancesService = require('../balances/balances-service')
 
 const FinancesService = {
    getAllFinances(db, user_id) {
@@ -20,6 +21,23 @@ const FinancesService = {
          .into('finances')
          .returning('*')
          .then(rows => rows[0])
+   },
+   deleteTransaction(db, transaction_id, user_id) {
+      return db.raw(
+         `do
+         $do$
+         begin
+            if ((select type from finances where id = ${transaction_id}) = 'credit')
+               then update balances set balance = cast(balance as numeric) - (select cast(amount as numeric) from finances where id = ${transaction_id}) where user_id = ${user_id};
+               delete from finances where id = ${transaction_id};
+            else 
+               update balances set balance = cast(balance as numeric) + (select cast(amount as numeric) from finances where id = ${transaction_id}) where user_id = ${user_id};
+               delete from finances where id = ${transaction_id};
+            end if;
+         end
+         $do$
+         `
+      )
    },
    serializeFinances(finances) {
       return {

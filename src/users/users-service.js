@@ -28,14 +28,19 @@ const UsersService = {
    hashPassword(password){
       return bcrypt.hash(password, 12)
    },
-   insertNewUser(db, newuser) {
-      return db
-         .insert(newuser)
-         .into('users')
-         .returning('*')
-         .then(([user]) => {
-            return user
-         })
+   insertNewUser(db, newUser) {
+      return db.raw(
+         `with new_user as (
+            INSERT INTO users (user_name, full_name, email, password)
+            values ('${newUser.user_name}', '${newUser.full_name}', '${newUser.email}', '${newUser.password}')
+            returning id
+         )
+         INSERT INTO balances (balance, user_id)
+         values 
+         (0.00,
+            (select id from new_user)
+         );`
+      )
    },
    returnUserFullName(db, user_id) {
       return db

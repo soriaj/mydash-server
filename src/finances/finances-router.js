@@ -59,5 +59,13 @@ financesRouter
          .catch(next)
    })
    .get((req, res) => res.json(FinancesService.serializeFinances(res.trx)))
+   .delete(requireAuth, (req, res, next) => {
+      const { finance_id } = req.params
+      const user_id = req.user.id
+      const knexInstance = req.app.get('db')
+
+      FinancesService.deleteTransaction(knexInstance, finance_id, user_id)
+         .then(() => res.status(204).end()).catch(next)
+   })
 
 module.exports = financesRouter
