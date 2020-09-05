@@ -36,7 +36,7 @@ usersRouter
          UsersService.checkForDuplicateUsers(knexInstance, newUser.user_name)
             .then(user => {
                if(user) {
-                  return res.status(400).json({ error: `Username is already exists`})
+                  return res.status(400).json({ error: `Username already exists`})
                }
                // Hash password into the db
                return UsersService.hashPassword(password)
