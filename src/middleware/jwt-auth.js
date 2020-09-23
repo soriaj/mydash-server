@@ -16,6 +16,7 @@ function requireAuth(req, res, next) {
    try {
       // Validate jwt signature matches and return payload
       const payload = AuthService.verifyJwt(bearerToken)
+      console.log('test from node')
       // Verify username from DB
       AuthService.getUserWithUserName(
         knexInstance,

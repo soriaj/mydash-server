@@ -32,8 +32,8 @@ authRouter
                   }
                   // If username and password match db entry respond with JWT authToken
                   const sub = dbUser.user_name
-                  const payload = { sub: sub, user_id: dbUser.id }
-                  res.send({ authToken: AuthService.createJwt(payload) })
+                  const payload = { user_id: dbUser.id }
+                  res.send({ authToken: AuthService.createJwt(sub, payload) })
                })
          })
          .catch(next)
