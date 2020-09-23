@@ -22,7 +22,7 @@ const AuthService = {
       })
    },
    verifyJwt(token) {
-      return jwt.verify(token, config.JWT_SECRET, {
+      return jwt.verify(token, new Buffer(config.JWT_SECRET, 'base64'), {
         algorithms: ['HS256'],
       })
    },
