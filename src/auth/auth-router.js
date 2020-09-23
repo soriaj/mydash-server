@@ -1,13 +1,11 @@
 const express = require('express')
-const path = require('path')
 const AuthService = require('./auth-service')
 
 const authRouter = express.Router()
 const bodyParser = express.json()
 
 authRouter
-   .route('/login')
-   .post(bodyParser, (req, res, next) => {
+   .post('/login', bodyParser, (req, res, next) => {
       const { user_name, password } = req.body
       const login = { user_name, password }
       const knexInstance = req.app.get('db')
@@ -32,8 +30,10 @@ authRouter
                   if(!passwordMatch) {
                      return res.status(400).json({ error: `Incorrect username or password` })
                   }
-                  // If username and password match db entry respond authToken
-                  res.send({ authToken: AuthService.createBasicToken(login.user_name, login.password)})
+                  // If username and password match db entry respond with JWT authToken
+                  const sub = user.user_name
+                  const payload = { user_id: user.id }
+                  res.send({ authToken: AuthService.createJwt(sub, payload)})
                })
          })
          .catch(next)
