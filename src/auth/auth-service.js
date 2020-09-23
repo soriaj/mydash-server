@@ -15,8 +15,9 @@ const AuthService = {
    createBasicToken(user_name, password) {
       return Buffer.from(`${user_name}:${password}`).toString('base64')
    },
-   createJwt(payload) {
+   createJwt(sub, payload) {
       return jwt.sign(payload, config.JWT_SECRET, {
+         subject: sub,
          algorithm: 'HS256',
       })
    },
