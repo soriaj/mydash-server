@@ -5,7 +5,8 @@ const authRouter = express.Router()
 const bodyParser = express.json()
 
 authRouter
-   .post('/login', bodyParser, (req, res, next) => {
+   .route('/login')
+   .post(bodyParser, (req, res, next) => {
       const { user_name, password } = req.body
       const login = { user_name, password }
       const knexInstance = req.app.get('db')
@@ -16,24 +17,23 @@ authRouter
             return res.status(400).json({ error: `Missing '${k}' in request body` })
          }
       
-      
       AuthService.getUserWithUserName(knexInstance, login.user_name)
-         .then(user => {
+         .then(dbUser => {
             // If response from db is undefined return error
-            if(!user) {
+            if(!dbUser) {
                return res.status(400).json({ error: `Incorrect username or password` })
             }
             // Check if passwords match login
-            return AuthService.compareLoginPassword(login.password, user.password)
+            return AuthService.compareLoginPassword(login.password, dbUser.password)
                .then(passwordMatch => {
                   // If responds from db is undefined return error
                   if(!passwordMatch) {
                      return res.status(400).json({ error: `Incorrect username or password` })
                   }
                   // If username and password match db entry respond with JWT authToken
-                  const sub = user.user_name
-                  const payload = { user_id: user.id }
-                  res.send({ authToken: AuthService.createJwt(sub, payload)})
+                  const sub = dbUser.user_name
+                  const payload = { sub: sub, user_id: dbUser.id }
+                  res.send({ authToken: AuthService.createJwt(payload) })
                })
          })
          .catch(next)

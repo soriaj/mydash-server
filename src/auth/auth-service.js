@@ -15,15 +15,14 @@ const AuthService = {
    createBasicToken(user_name, password) {
       return Buffer.from(`${user_name}:${password}`).toString('base64')
    },
-   createJwt(sub, payload) {
+   createJwt(payload) {
       return jwt.sign(payload, config.JWT_SECRET, {
-         sub,
-         algorithm: 'HS256'
+         algorithm: 'HS256',
       })
    },
    verifyJwt(token) {
       return jwt.verify(token, config.JWT_SECRET, {
-         algorithm: ['HS256']
+        algorithms: ['HS256'],
       })
    },
    parseBasicToken(token) {

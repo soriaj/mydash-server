@@ -1,6 +1,6 @@
 const express = require('express')
 const path = require('path')
-const { requireAuth } = require('../middleware/basic-auth')
+const { requireAuth } = require('../middleware/jwt-auth')
 const EventsService = require('./events-service')
 
 const eventsRouter = express.Router()
