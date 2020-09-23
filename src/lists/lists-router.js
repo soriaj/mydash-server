@@ -2,7 +2,7 @@ const express = require('express')
 const path = require('path')
 const ListsService = require('./lists-service')
 const ListsItemsService = require('../listsItems/listsItems-service')
-const { requireAuth } = require('../middleware/basic-auth')
+const { requireAuth } = require('../middleware/jwt-auth')
 
 const listRouter = express.Router()
 const bodyParser = express.json()
