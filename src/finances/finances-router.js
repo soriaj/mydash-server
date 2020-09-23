@@ -1,6 +1,7 @@
 const express = require('express')
 const path = require('path')
-const { requireAuth } = require('../middleware/jwt-auth')
+// const { requireAuth } = require('../middleware/jwt-auth')
+const { requireAuth } = require('../middleware/basic-auth')
 const FinancesService = require('./finances-service')
 
 const financesRouter = express.Router()

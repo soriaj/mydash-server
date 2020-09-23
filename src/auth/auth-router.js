@@ -31,9 +31,10 @@ authRouter
                      return res.status(400).json({ error: `Incorrect username or password` })
                   }
                   // If username and password match db entry respond with JWT authToken
-                  const sub = dbUser.user_name
-                  const payload = { sub: sub, user_id: dbUser.id }
-                  res.send({ authToken: AuthService.createJwt(payload) })
+                  // const sub = dbUser.user_name
+                  // const payload = { sub: sub, user_id: dbUser.id }
+                  // res.send({ authToken: AuthService.createJwt(payload) })
+                  res.send({ authToken: AuthService.createBasicToken(login.user_name, login.password)})
                })
          })
          .catch(next)
