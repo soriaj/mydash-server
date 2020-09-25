@@ -37,7 +37,7 @@ Run the tests `npm test`
 
 ## Run with Docker compose
 
-See MyDash-client README for details at https://github.com/soriaj/mydash-client
+See MyDash-client README for details at [MyDash-Client](https://github.com/soriaj/mydash-client)
 
 ## Deploying
 
